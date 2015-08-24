@@ -1,0 +1,101 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="../core-icon/core-icon.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+
+<polymer-element name="cbn-file-upload" attributes="url,getUploadUrl">
+
+	<template>
+
+		<style type="text/css">
+			.iconButton{
+				min-width: 0px;
+			}
+
+			[hidden] {
+				display: none;
+			}
+		</style>
+		<core-ajax id="getUrl" url="{{getUploadUrl}}" params='{{ {"redirectUrl": url} }}' on-core-response="{{urlReceived}}" response="{{urlResponse}}"></core-ajax>
+		<paper-button on-tap="{{downloadClient}}" class="iconButton" on-click="{{onClick}}">
+			<core-icon icon="cloud-upload" style=""></core-icon>
+		</paper-button>
+		<input type="file" id="fileInput" on-change="{{fileChange}}" hidden>
+		<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
+		<paper-toast id="toastFail" text="Error uploading file!"></paper-toast>
+	</template>
+
+	<script>
+
+		Polymer('cbn-file-upload', {
+			/**
+			 * The target url to upload the file
+			 *
+			 * @attribute url
+			 * @type string
+			 * @default "/"
+			 */
+
+			url: "/",
+			getUploadUrl: null,
+			_url:"/",
+			cachedEvent: null,
+			onClick: function () {
+				var elem = this.$.fileInput;
+				if (elem && document.createEvent) { // sanity check
+					var evt = document.createEvent("MouseEvents");
+					evt.initEvent("click", true, false);
+					elem.dispatchEvent(evt);
+				}
+			},
+			fileChange: function (e) {
+				this.cachedEvent = e;
+				if(this.getUploadUrl!=null){
+					this.$.getUrl.go();
+				} else {
+					this._url = this.url;
+					this.upload();
+				}
+				
+			},
+			urlReceived: function(){
+				this._url = this.urlResponse;
+				this.upload();
+			},
+			upload: function(){
+				var file = this.$.fileInput.files[0];
+				if (!file) {
+					this.fileName = "";
+				} else {
+					var self = this;
+					this.fileName = file.name;
+					var formData = new FormData();
+					formData.append("file", file);
+
+					var xhr = new XMLHttpRequest();
+					xhr.upload.addEventListener('progress', function (e) {
+						var done = e.loaded, total = e.total;
+						self.progress = Math.floor(done / total * 1000) / 10;
+					});
+					xhr.open('POST', this._url, true);
+					xhr.onload = function (e) {
+						if (xhr.status == 200) {
+							self.$.toastSuccess.show();
+							self.fire('success', {xhr: xhr});
+
+						} else {
+							self.$.toastFail.show();
+							self.fire('error', {xhr: xhr});
+						}
+
+					};
+					xhr.send(formData);
+				}
+			}
+		});
+
+	</script>
+
+</polymer-element>
