@@ -5,7 +5,7 @@
 <link rel="import" href="../core-icon/core-icon.html">
 <link rel="import" href="../paper-toast/paper-toast.html">
 
-<polymer-element name="cbn-file-upload" attributes="url,getUploadUrl">
+<polymer-element name="cbn-file-upload" attributes="url,getUploadUrl,params">
 
 	<template>
 
@@ -41,6 +41,9 @@
 			url: "/",
 			getUploadUrl: null,
 			_url:"/",
+			params: null, 
+			
+			
 			cachedEvent: null,
 			onClick: function () {
 				var elem = this.$.fileInput;
@@ -73,6 +76,10 @@
 					this.fileName = file.name;
 					var formData = new FormData();
 					formData.append("file", file);
+					var extraParams = this.getParams();
+					for(var i in extraParams){
+						formData.append(i,extraParams[i]);
+					}
 
 					var xhr = new XMLHttpRequest();
 					xhr.upload.addEventListener('progress', function (e) {
@@ -93,6 +100,13 @@
 					};
 					xhr.send(formData);
 				}
+			},
+			getParams: function() {
+				params = this.params || {};
+				if (params && typeof(params) == 'string') {
+					params = JSON.parse(params);
+				}
+				return params;
 			}
 		});
 
