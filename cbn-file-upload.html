@@ -72,6 +72,7 @@
 				if (!file) {
 					this.fileName = "";
 				} else {
+					this.$.fileInput.value="";
 					var self = this;
 					this.fileName = file.name;
 					var formData = new FormData();
