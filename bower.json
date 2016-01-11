@@ -9,14 +9,15 @@
         "/tests/"
     ],
     "dependencies": {
-        "polymer": "Polymer/polymer#^0.5",
-        "core-ajax": "Polymer/core-ajax#^0.5",
-        "paper-button": "Polymer/paper-button#^0.5",
-        "core-icons": "Polymer/core-icons#^0.5",
-        "core-icon": "Polymer/core-icon#^0.5",
-        "paper-toast": "Polymer/paper-toast#^0.5"
+        "polymer": "Polymer/polymer#^1.2",
+        "iron-icon": "PolymerElements/iron-icon#^1.0",
+        "iron-icons": "PolymerElements/iron-icons#^1.0",
+        "iron-ajax": "PolymerElements/iron-ajax#^1.0",
+        "paper-button":"PolymerElements/paper-button#^1.0"
     },
     "devDependencies": {
-        "web-component-tester": "Polymer/web-component-tester#^2.0.5"
+        "web-component-tester": "Polymer/web-component-tester",
+        "iron-component-page": "PolymerElements/iron-component-page#^1.0",
+        "test-fixture": "PolymerElements/test-fixture#^1.0"
     }
 }

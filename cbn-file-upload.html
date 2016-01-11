@@ -1,87 +1,85 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../core-icons/core-icons.html">
-<link rel="import" href="../core-icon/core-icon.html">
-<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 
-<polymer-element name="cbn-file-upload" attributes="url,getUploadUrl,params">
+<dom-module id="cbn-file-upload">
+	<style type="text/css">
+		[hidden] {
+			display: none !important;
+		}
 
+		.iconButton {
+			min-width: 0px;
+		}
+	</style>
 	<template>
-
-		<style type="text/css">
-			.iconButton{
-				min-width: 0px;
-			}
-
-			[hidden] {
-				display: none;
-			}
-		</style>
-		<core-ajax id="getUrl" url="{{getUploadUrl}}" params='{{ {"redirectUrl": url} }}' on-core-response="{{urlReceived}}" response="{{urlResponse}}"></core-ajax>
-		<paper-button on-tap="{{downloadClient}}" class="iconButton" on-click="{{onClick}}">
-			<core-icon icon="cloud-upload" style=""></core-icon>
+		<iron-ajax handle-as="text" id="getUrl" url="{{getUploadUrl}}" params="{{computeParams(url)}}" on-response="urlReceived"></iron-ajax>
+		<paper-button class="iconButton" on-click="onClick">
+			<iron-icon icon="cloud-upload" style=""></iron-icon>
 		</paper-button>
-		<input type="file" id="fileInput" on-change="{{fileChange}}" hidden>
-		<paper-toast id="toastSuccess" text="File uploaded successfully!"></paper-toast>
-		<paper-toast id="toastFail" text="Error uploading file!"></paper-toast>
+		<input type="file" id="fileInput" on-change="fileChange" hidden="">
 	</template>
-
 	<script>
-
-		Polymer('cbn-file-upload', {
-			/**
-			 * The target url to upload the file
-			 *
-			 * @attribute url
-			 * @type string
-			 * @default "/"
-			 */
-
-			url: "/",
-			getUploadUrl: null,
-			_url:"/",
-			params: null, 
-			
-			
-			cachedEvent: null,
+		Polymer({
+			is: 'cbn-file-upload',
+			properties: {
+				getUploadUrl: {
+					type:String,
+					value: null
+				},
+				params: {
+					type:Object,
+					value: null
+				},
+				/**
+				 * The target url to upload the file
+				 *
+				 * @attribute url
+				 * @type string
+				 * @default "/"
+				 */
+				url: {
+					type: String,
+					value: '/'
+				}
+			},
 			onClick: function () {
 				var elem = this.$.fileInput;
-				if (elem && document.createEvent) { // sanity check
-					var evt = document.createEvent("MouseEvents");
-					evt.initEvent("click", true, false);
+				if (elem && document.createEvent) {
+					// sanity check
+					var evt = document.createEvent('MouseEvents');
+					evt.initEvent('click', true, false);
 					elem.dispatchEvent(evt);
 				}
 			},
 			fileChange: function (e) {
-				this.cachedEvent = e;
-				if(this.getUploadUrl!=null){
-					this.$.getUrl.go();
+				if (this.getUploadUrl != null) {
+					this.$.getUrl.generateRequest();
 				} else {
 					this._url = this.url;
 					this.upload();
 				}
-				
 			},
-			urlReceived: function(){
-				this._url = this.urlResponse;
+			urlReceived: function (event) {
+				this._url = event.detail.response;
 				this.upload();
 			},
-			upload: function(){
+			upload: function () {
 				var file = this.$.fileInput.files[0];
 				if (!file) {
-					this.fileName = "";
+					this.fileName = '';
 				} else {
-					this.$.fileInput.value="";
+					this.$.fileInput.value = '';
 					var self = this;
 					this.fileName = file.name;
 					var formData = new FormData();
-					formData.append("file", file);
+					formData.append('file', file);
 					var extraParams = this.getParams();
-					for(var i in extraParams){
-						formData.append(i,extraParams[i]);
+					for (var i in extraParams) {
+						formData.append(i, extraParams[i]);
 					}
-
 					var xhr = new XMLHttpRequest();
 					xhr.upload.addEventListener('progress', function (e) {
 						var done = e.loaded, total = e.total;
@@ -90,27 +88,33 @@
 					xhr.open('POST', this._url, true);
 					xhr.onload = function (e) {
 						if (xhr.status == 200) {
-							self.$.toastSuccess.show();
-							self.fire('success', {xhr: xhr});
-
+							this.fire("cbn-message", {
+								type: "success",
+								text: "Fisierul a fost uploadat"
+							});
+							this.fire('success', {xhr: xhr});
 						} else {
-							self.$.toastFail.show();
-							self.fire('error', {xhr: xhr});
+							this.fire("cbn-message", {
+								type: "error",
+								text: "Fisierul nu a fost uploadat ! Incercati din nou."
+							});
+							this.fire('error', {xhr: xhr});
 						}
-
-					};
+					}.bind(this);
 					xhr.send(formData);
 				}
 			},
-			getParams: function() {
+			getParams: function () {
 				params = this.params || {};
-				if (params && typeof(params) == 'string') {
+				if (params && typeof params == 'string') {
 					params = JSON.parse(params);
 				}
 				return params;
+			},
+			computeParams: function (url) {
+				return {'redirectUrl': url};
 			}
 		});
-
 	</script>
-
-</polymer-element>
+</dom-module>
+  
