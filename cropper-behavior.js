@@ -88,12 +88,14 @@ Cbn.cropper = {
 		});
 		var cropperWidth = this.cropper.getCropBoxData().width;
 		var cropperHeight = this.cropper.getCropBoxData().height;
-		var ratio = Math.max(container.height / cropperHeight, container.width / cropperWidth);
+		var imageWidth = this.cropper.getCanvasData().naturalWidth;
+		var imageHeight = this.cropper.getCanvasData().naturalHeight;
+		var ratio = Math.max(imageHeight / cropperHeight, imageWidth / cropperWidth);
 		this.cropper.setCanvasData({
-			width: container.width / ratio,
-			height: container.height / ratio,
-			top: parseInt((container.height - (container.height / ratio)) / 2),
-			left: parseInt((container.width - (container.width / ratio)) / 2)
+			width: imageWidth / ratio,
+			height: imageHeight / ratio,
+			top: parseInt((container.height - (imageHeight / ratio)) / 2),
+			left: parseInt((container.width - (imageWidth / ratio)) / 2)
 		});
 	},
 	rotateLeft: function () {
