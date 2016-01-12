@@ -272,10 +272,12 @@
 					for (var i in extraParams) {
 						formData.append(i, extraParams[i]);
 					}
+					this.loading=true;
 					var xhr = new XMLHttpRequest();
 					xhr.upload.addEventListener('progress', function (e) {
 						var done = e.loaded, total = e.total;
 						this.progress = Math.floor(done / total * 1000) / 10;
+						
 					}.bind(this));
 					xhr.open('POST', this._url, true);
 					xhr.onload = function (e) {
@@ -293,6 +295,7 @@
 							});
 							this.fire('error', {xhr: xhr});
 						}
+						this.loading=false;
 					}.bind(this);
 					xhr.send(formData);
 				}
