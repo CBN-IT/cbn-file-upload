@@ -7,6 +7,26 @@
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-styles/color.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<script>
+	if (!HTMLCanvasElement.prototype.toBlob) {
+		Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+			value: function (callback, type, quality) {
+
+				var binStr = atob( this.toDataURL(type, quality).split(',')[1] ),
+					len = binStr.length,
+					arr = new Uint8Array(len);
+
+				for (var i=0; i<len; i++ ) {
+					arr[i] = binStr.charCodeAt(i);
+				}
+
+				callback( new Blob( [arr], {type: type || 'image/png'} ) );
+			}
+		});
+	}
+</script>
+
 
 <script src="../cropperjs/dist/cropper.min.js"></script>
 <script src="cropper-behavior.js"></script>
@@ -23,8 +43,8 @@
 		}
 		.image-container{
 			display: inline-block;
-			width: 400px;
-			height: 300px;
+			width: 750px;
+			height: 400px;
 			box-sizing: border-box;
 			padding:0;
 			margin: 20px 24px 0px 24px;
@@ -50,9 +70,6 @@
 			color: var(--paper-red-400);
 			margin-right: 7px;
 		}
-		#confirmSaving paper-button {
-			padding: 0.3em 0.57em;
-		}
 
 		#confirmSaving .content {
 			font-size: 17px;
@@ -65,31 +82,74 @@
 			font-weight: bold;
 		}
 
-		#confirmSaving paper-button.red:hover {
-			background-color: var(--paper-red-100);
+		.save,
+		.icon-btn {
+			background-color: #4285f4;
+			color: #fff;
+			min-width: 0;
+			padding: 0 5px 0 5px;
+			margin: 0;
+			height: 26px;
+			overflow: hidden;
 		}
 
-		#confirmSaving paper-button.green:hover {
-			background-color: var(--paper-green-100);
+		.icon-btn > .icon-btn-text {
+			margin-right: 5px;
 		}
 
-		#confirmSaving paper-button.grey:hover {
-			background-color: var(--paper-grey-100);
+		.save > iron-icon,
+		.save > .save-icon,
+		.icon-btn > .icon-btn-icon {
+			width: 20px;
+			height: 20px;
+			margin: 3px 0;
 		}
 
-		#confirmSaving paper-button.red {
-			background-color: white;
-			color: var(--google-red-500);
+		.save > paper-spinner,
+		.save > .save-spinner,
+		.icon-btn > .icon-btn-spinner {
+			--paper-spinner-layer-1-color: white;
+			--paper-spinner-layer-2-color: white;
+			--paper-spinner-layer-3-color: white;
+			--paper-spinner-layer-4-color: white;
+			--paper-spinner-color: white;
+			height: 16px;
+			width: 16px;
+			margin: 5px 2px;
 		}
 
-		#confirmSaving paper-button.green {
-			background-color: white;
-			color: var(--google-green-500);
+		.icon-btn.blue {
+			background-color: var(--paper-blue-500);
 		}
 
-		#confirmSaving paper-button.grey {
-			color: initial;
+		.icon-btn.blue:hover {
+			background-color: var(--paper-blue-900);
 		}
+
+		.icon-btn.red {
+			background-color: var(--google-red-500);
+		}
+
+		.icon-btn.red:hover {
+			background-color: var(--paper-red-900);
+		}
+
+		.icon-btn.green {
+			background-color: var(--google-green-500);
+		}
+
+		.icon-btn.green:hover {
+			background-color: var(--paper-green-900);
+		}
+
+		.icon-btn.grey {
+			background-color: var(--paper-grey-500);
+		}
+
+		.icon-btn.grey:hover {
+			background-color: var(--paper-grey-900);
+		}
+		
 		paper-button[hidden]{
 			display: none !important;
 		}
@@ -118,8 +178,15 @@
 			</div>
 			
 			<div class="modal-buttons">
-				<paper-button class="grey" on-tap="_cancelChanges">Cancel</paper-button>
-				<paper-button class="green" on-tap="_saveChanges">Save</paper-button>
+				<paper-button class="grey icon-btn" on-tap="_cancelChanges">
+					<iron-icon class="icon-btn-icon" icon="cancel"></iron-icon>
+					<span class="icon-btn-text">Cancel</span>
+				</paper-button>
+				<paper-button class="green icon-btn" on-tap="_saveChanges">
+					<iron-icon class="icon-btn-icon" icon="check" hidden$="[[loading]]"></iron-icon>
+					<paper-spinner-lite class="icon-btn-spinner" active="[[loading]]" hidden$="[[!loading]]"></paper-spinner-lite>
+					<span class="icon-btn-text">Save</span>
+				</paper-button>
 			</div>
 		</paper-dialog>
 		
@@ -152,6 +219,10 @@
 				noButton: {
 					type:Boolean,
 					value:false
+				},
+				loading: {
+					type: Boolean,
+					value: false
 				}
 			},
 			onClick: function () {
@@ -245,24 +316,6 @@
 				}.bind(this));
 			}
 		});
-	</script>
-	<script>
-		if (!HTMLCanvasElement.prototype.toBlob) {
-			Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
-				value: function (callback, type, quality) {
-
-					var binStr = atob( this.toDataURL(type, quality).split(',')[1] ),
-						len = binStr.length,
-						arr = new Uint8Array(len);
-
-					for (var i=0; i<len; i++ ) {
-						arr[i] = binStr.charCodeAt(i);
-					}
-
-					callback( new Blob( [arr], {type: type || 'image/png'} ) );
-				}
-			});
-		}
 	</script>
 </dom-module>
   

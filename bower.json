@@ -17,6 +17,7 @@
         "paper-dialog": "PolymerElements/paper-dialog#^1.0",
         "paper-styles": "PolymerElements/paper-styles#^1.0.0",
         "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+        "paper-spinner": "PolymerElements/paper-spinner#^1.0.0",
         "cropperjs": "~0.5.5"
     },
     "devDependencies": {
