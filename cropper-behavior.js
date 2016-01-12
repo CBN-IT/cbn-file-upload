@@ -116,4 +116,28 @@ Cbn.cropper = {
 			}
 		}.bind(this));
 	}
+	/*
+	TODO: add interaction with keyboard
+	switch (e.keyCode) {
+	 case 37:
+	 preventDefault(e);
+	 cropper.move(-1, 0);
+	 break;
+
+	 case 38:
+	 preventDefault(e);
+	 cropper.move(0, -1);
+	 break;
+
+	 case 39:
+	 preventDefault(e);
+	 cropper.move(1, 0);
+	 break;
+
+	 case 40:
+	 preventDefault(e);
+	 cropper.move(0, 1);
+	 break;
+	 }
+	 */
 };
