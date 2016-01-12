@@ -7,11 +7,11 @@ Cbn.cropper = {
 			type: Number,
 			value: 1
 		},
-		dragMode:{
+		dragMode: {
 			type: String,
 			value: "move"
 		},
-		minCropBoxHeight:{
+		minCropBoxHeight: {
 			type: Number,
 			value: 50
 		},
@@ -19,19 +19,19 @@ Cbn.cropper = {
 		 * https://github.com/fengyuanchen/cropperjs#autocroparea
 		 * A number between 0 and 1. Define the automatic cropping area size (percentage).
 		 */
-		autoCropArea:{
+		autoCropArea: {
 			type: Number,
 			value: 1
 		},
-		image:{
+		image: {
 			type: Object,
-			value: function(){
+			value: function () {
 				return this.$.image;
 			}
 		}
 	},
-	
-	ready: function(){
+
+	ready: function () {
 		this.cropper = new Cropper(this.image, {
 			aspectRatio: this.aspectRatio,
 			dragMode: this.dragMode,
@@ -39,10 +39,10 @@ Cbn.cropper = {
 			autoCropArea: this.autoCropArea
 		});
 	},
-	zoomIn: function(){
+	zoomIn: function () {
 		this.cropper.zoom(0.1);
 	},
-	zoomOut:function(){
+	zoomOut: function () {
 		this.cropper.zoom(-0.1);
 	},
 	fit: function () {
@@ -104,23 +104,23 @@ Cbn.cropper = {
 	rotateRight: function () {
 		this.cropper.rotate(45);
 	},
-	flipHorizontal: function(){
-		this.cropper.scaleX(-1 *this.cropper.getData().scaleX);
+	flipHorizontal: function () {
+		this.cropper.scaleX(-1 * this.cropper.getData().scaleX);
 	},
-	flipVertical: function(){
-		this.cropper.scaleY(-1 *this.cropper.getData().scaleY);
+	flipVertical: function () {
+		this.cropper.scaleY(-1 * this.cropper.getData().scaleY);
 	},
-	generateFile: function(callback){
+	generateFile: function (callback) {
 		this.cropper.getCroppedCanvas().toBlob(function (blob) {
-			this.file=blob;
-			if(typeof callback === "function"){
+			this.file = blob;
+			if (typeof callback === "function") {
 				callback(blob);
 			}
 		}.bind(this));
 	}
 	/*
-	TODO: add interaction with keyboard
-	switch (e.keyCode) {
+	 TODO: add interaction with keyboard
+	 switch (e.keyCode) {
 	 case 37:
 	 preventDefault(e);
 	 cropper.move(-1, 0);
