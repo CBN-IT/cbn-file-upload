@@ -10,6 +10,7 @@
 
 <script src="../cropperjs/dist/cropper.min.js"></script>
 <script src="cropper-behavior.js"></script>
+<link  href="../cropperjs/dist/cropper.min.css" rel="stylesheet">
 
 <dom-module id="cbn-image-upload">
 	<style type="text/css">
@@ -93,7 +94,7 @@
 			display: none !important;
 		}
 	</style>
-	<link  href="../cropperjs/dist/cropper.min.css" rel="stylesheet">
+	
 	<template>
 		<iron-ajax handle-as="text" id="getUrl" url="{{getUploadUrl}}" params="{{computeParams(url)}}" on-response="urlReceived"></iron-ajax>
 		<paper-button class="iconButton" on-click="onClick">
