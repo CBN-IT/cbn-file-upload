@@ -97,7 +97,7 @@
 	
 	<template>
 		<iron-ajax handle-as="text" id="getUrl" url="{{getUploadUrl}}" params="{{computeParams(url)}}" on-response="urlReceived"></iron-ajax>
-		<paper-button class="iconButton" on-click="onClick">
+		<paper-button class="iconButton" on-click="onClick" hidden$="{{noButton}}">
 			<iron-icon icon="cloud-upload" style=""></iron-icon>
 		</paper-button>
 
@@ -148,6 +148,10 @@
 				url: {
 					type: String,
 					value: '/'
+				},
+				noButton: {
+					type:Boolean,
+					value:false
 				}
 			},
 			onClick: function () {
