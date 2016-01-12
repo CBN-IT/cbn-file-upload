@@ -11,7 +11,7 @@
 		}
 
 		.iconButton {
-			min-width: 0px;
+			min-width: 0;
 		}
 	</style>
 	<template>
@@ -19,7 +19,7 @@
 		<paper-button class="iconButton" on-click="onClick">
 			<iron-icon icon="cloud-upload" style=""></iron-icon>
 		</paper-button>
-		<input type="file" id="fileInput" on-change="fileChange" hidden="">
+		<input type="file" id="fileInput" on-change="fileChange" hidden>
 	</template>
 	<script>
 		Polymer({

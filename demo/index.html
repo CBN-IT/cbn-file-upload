@@ -14,6 +14,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 	<link rel="import" href="../cbn-file-upload.html">
+	<link rel="import" href="../cbn-image-upload.html">
 
 	<style>
 		html,body{
@@ -33,6 +34,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<template id="first" is="dom-bind">
 		<cbn-file-upload url="/" get-upload-url="response.txt"></cbn-file-upload>
 		<cbn-file-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-file-upload>
+		<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-image-upload>
+		<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}' aspect-ratio="3.25"></cbn-image-upload>
 	</template>
 	</body>
 </html>
