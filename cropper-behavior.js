@@ -3,9 +3,17 @@ if (window.Cbn === undefined) {
 }
 Cbn.cropper = {
 	properties: {
+		imageWidth: {
+			type: Number,
+			value: 100
+		},
+		imageHeight: {
+			type: Number,
+			value: 100
+		},
 		aspectRatio: {
 			type: Number,
-			value: 1
+			computed:"_computeAspectRatio(imageWidth, imageHeight)"
 		},
 		dragMode: {
 			type: String,
@@ -111,12 +119,18 @@ Cbn.cropper = {
 		this.cropper.scaleY(-1 * this.cropper.getData().scaleY);
 	},
 	generateFile: function (callback) {
-		this.cropper.getCroppedCanvas().toBlob(function (blob) {
+		this.cropper.getCroppedCanvas({
+			width: this.imageWidth,
+			height: this.imageHeight
+		}).toBlob(function (blob) {
 			this.file = blob;
 			if (typeof callback === "function") {
 				callback(blob);
 			}
 		}.bind(this));
+	},
+	_computeAspectRatio: function () {
+		return parseFloat(this.imageWidth) / parseFloat(this.imageHeight);
 	}
 	/*
 	 TODO: add interaction with keyboard
