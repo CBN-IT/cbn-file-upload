@@ -224,7 +224,11 @@
 				loading: {
 					type: Boolean,
 					value: false
-				}
+				},
+				_fileName: {
+					type: String,
+					value: ''
+				},
 			},
 			onClick: function () {
 				var elem = this.$.fileInput;
@@ -237,20 +241,12 @@
 			},
 			fileChange: function (e) {
 				var files = this.$.fileInput.files;
-				var file;
-
-				if (this.cropper && files && files.length) {
-					file = files[0];
-
-					if (/^image\/\w+/.test(file.type)) {
-						var blobURL = URL.createObjectURL(file);
-						this.cropper.reset().replace(blobURL);
-						this.$.fileInput.value = null;
-						this.$.confirmSaving.open();
-					} else {
-						window.alert('Please choose an image file.');
-					}
+				if (files && files.length) {
+					var file = files[0];
+					this._fileName = file.name;
+					this._reset(file);
 				}
+				
 			},
 			startUpload: function () {
 				if (this.getUploadUrl != null) {
@@ -268,7 +264,7 @@
 				var file = this.file;
 				if (file) {
 					var formData = new FormData();
-					formData.append('file', file);
+					formData.append('file', file, this._fileName);
 					var extraParams = this.getParams();
 					for (var i in extraParams) {
 						formData.append(i, extraParams[i]);
