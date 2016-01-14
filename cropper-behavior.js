@@ -36,10 +36,6 @@ Cbn.cropper = {
 			value: function () {
 				return this.$.image;
 			}
-		},
-		cropWhitespace: {
-			type: Boolean,
-			value: false
 		}
 	},
 
@@ -136,7 +132,7 @@ Cbn.cropper = {
 	_computeAspectRatio: function () {
 		return parseFloat(this.imageWidth) / parseFloat(this.imageHeight);
 	},
-	removeBlanks: function (context, canvas, imgWidth, imgHeight, callback) {
+	_removeBlanksFromImage: function (context, canvas, imgWidth, imgHeight, callback) {
 		var imageData = context.getImageData(0, 0, imgWidth, imgHeight),
 			data = imageData.data,
 			getRBG = function (x, y) {
@@ -206,9 +202,7 @@ Cbn.cropper = {
 		if (this.cropper && file) {
 			if (/^image\/\w+/.test(file.type)) {
 				var blobURL = URL.createObjectURL(file);
-				this._cropWhitespace(blobURL, function (url) {
-					this.cropper.reset().replace(url);
-				}.bind(this));
+				this._resetCropper(blobURL);
 				this.$.fileInput.value = null;
 				this.$.confirmSaving.open();
 			} else {
@@ -216,22 +210,20 @@ Cbn.cropper = {
 			}
 		}
 	},
-	_cropWhitespace: function (blobURL, callback) {
-		if (this.cropWhitespace) {
-			var img = new Image();
-			img.onload = function () {
-				var canvas = document.createElement("canvas");
-				canvas.setAttribute("width", img.width + "");
-				canvas.setAttribute("height", img.height + "");
-				var context = canvas.getContext("2d");
-				context.drawImage(img, 0, 0);
-				this.removeBlanks(context, canvas, img.width, img.height, callback);
-				URL.revokeObjectURL(blobURL);
-			}.bind(this);
-			img.src = blobURL;
-		} else {
-			callback(blobURL);
-		}
+	cropWhitespace: function(){
+		var img = this.image;
+		var imgWidth = img.width;
+		var imgHeight = img.height;
+		var canvas = document.createElement("canvas");
+		canvas.setAttribute("width", imgWidth + "");
+		canvas.setAttribute("height", imgHeight + "");
+		var context = canvas.getContext("2d");
+		context.drawImage(img, 0, 0);
+		URL.revokeObjectURL(img.src);
+		this._removeBlanksFromImage(context, canvas, imgWidth, imgHeight, this._resetCropper.bind(this));
+	},
+	_resetCropper:function (url) {
+		this.cropper.reset().replace(url);
 	}
 	/*
 	 TODO: add interaction with keyboard

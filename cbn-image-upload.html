@@ -176,6 +176,7 @@
 				<paper-icon-button icon="image:rotate-right" on-tap="rotateRight"></paper-icon-button>
 				<paper-icon-button icon="image:flip" on-tap="flipHorizontal"></paper-icon-button>
 				<paper-icon-button icon="image:flip" on-tap="flipVertical" style="transform:rotate(90deg)"></paper-icon-button>
+				<paper-icon-button icon="image:crop" on-tap="cropWhitespace"></paper-icon-button>
 			</div>
 			
 			<div class="modal-buttons">
@@ -228,7 +229,7 @@
 				_fileName: {
 					type: String,
 					value: ''
-				},
+				}
 			},
 			onClick: function () {
 				var elem = this.$.fileInput;
@@ -274,7 +275,6 @@
 					xhr.upload.addEventListener('progress', function (e) {
 						var done = e.loaded, total = e.total;
 						this.progress = Math.floor(done / total * 1000) / 10;
-						
 					}.bind(this));
 					xhr.open('POST', this._url, true);
 					xhr.onload = function (e) {
