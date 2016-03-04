@@ -121,7 +121,8 @@ Cbn.cropper = {
 	generateFile: function (callback) {
 		this.cropper.getCroppedCanvas({
 			width: this.imageWidth,
-			height: this.imageHeight
+			height: this.imageHeight,
+			fillColor: "white"
 		}).toBlob(function (blob) {
 			this.file = blob;
 			if (typeof callback === "function") {
@@ -146,7 +147,7 @@ Cbn.cropper = {
 			},
 			isWhite = function (rgb) {
 				// many images contain noise, as the white is not a pure #fff white
-				return rgb.red > 225 && rgb.green > 225 && rgb.blue > 225;
+				return rgb.opacity<25 || rgb.red > 225 && rgb.green > 225 && rgb.blue > 225;
 			},
 			scanY = function (fromTop) {
 				var offset = fromTop ? 1 : -1;
