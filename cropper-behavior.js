@@ -189,7 +189,7 @@ Cbn.cropper = {
 			cropWidth = cropRight - cropLeft,
 			cropHeight = cropBottom - cropTop;
 		var $croppedCanvas = document.createElement("canvas");
-		$croppedCanvas.setAttribute("width", cropHeight+"");
+		$croppedCanvas.setAttribute("width", cropWidth+"");
 		$croppedCanvas.setAttribute("height", cropHeight+"");
 		// finally crop the guy
 		$croppedCanvas.getContext("2d").drawImage(canvas,
