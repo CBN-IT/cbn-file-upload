@@ -1,0 +1,328 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icons/image-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-spinner/paper-spinner-lite.html">
+<script>
+	if (!HTMLCanvasElement.prototype.toBlob) {
+		Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+			value: function (callback, type, quality) {
+
+				var binStr = atob( this.toDataURL(type, quality).split(',')[1] ),
+					len = binStr.length,
+					arr = new Uint8Array(len);
+
+				for (var i=0; i<len; i++ ) {
+					arr[i] = binStr.charCodeAt(i);
+				}
+
+				callback( new Blob( [arr], {type: type || 'image/png'} ) );
+			}
+		});
+	}
+</script>
+
+
+<script src="../cropperjs/dist/cropper.min.js"></script>
+<script src="cropper-behavior.js"></script>
+<link  href="../cropperjs/dist/cropper.min.css" rel="stylesheet">
+
+<style>
+	.cropper-crop-box{
+		background-color: white;
+	}
+</style>
+
+<dom-module id="cbn-image-upload">
+	<style type="text/css">
+		[hidden] {
+			display: none !important;
+		}
+
+		.iconButton {
+			min-width: 0;
+		}
+		.image-container{
+			display: inline-block;
+			width: 750px;
+			height: 400px;
+			box-sizing: border-box;
+			padding:0;
+			margin: 20px 24px 0px 24px;
+		}
+
+		.icons-container {
+			margin-top: 0;
+			text-align: center;
+		}
+
+		#confirmSaving {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+		#confirmSaving .header{
+			margin-top: 0;
+			background-color: #f7f7f7;
+			border-bottom: 1px solid #ebebeb;
+			font-size: 16px;
+			font-weight: bold;
+			padding: 10px 24px 10px 20px;
+		}
+		#confirmSaving .header iron-icon{
+			color: var(--paper-red-400);
+			margin-right: 7px;
+		}
+
+		#confirmSaving .content {
+			font-size: 17px;
+			font-weight:bold;
+		}
+
+		#confirmSaving .modal-buttons{
+			display: flex;
+			justify-content: space-around;
+			font-weight: bold;
+		}
+
+		.save,
+		.icon-btn {
+			background-color: #4285f4;
+			color: #fff;
+			min-width: 0;
+			padding: 0 5px 0 5px;
+			margin: 0;
+			height: 26px;
+			overflow: hidden;
+		}
+
+		.icon-btn > .icon-btn-text {
+			margin-right: 5px;
+		}
+
+		.save > iron-icon,
+		.save > .save-icon,
+		.icon-btn > .icon-btn-icon {
+			width: 20px;
+			height: 20px;
+			margin: 3px 0;
+		}
+
+		.save > paper-spinner,
+		.save > .save-spinner,
+		.icon-btn > .icon-btn-spinner {
+			--paper-spinner-layer-1-color: white;
+			--paper-spinner-layer-2-color: white;
+			--paper-spinner-layer-3-color: white;
+			--paper-spinner-layer-4-color: white;
+			--paper-spinner-color: white;
+			height: 16px;
+			width: 16px;
+			margin: 5px 2px;
+		}
+
+		.icon-btn.blue {
+			background-color: var(--paper-blue-500);
+		}
+
+		.icon-btn.blue:hover {
+			background-color: var(--paper-blue-900);
+		}
+
+		.icon-btn.red {
+			background-color: var(--google-red-500);
+		}
+
+		.icon-btn.red:hover {
+			background-color: var(--paper-red-900);
+		}
+
+		.icon-btn.green {
+			background-color: var(--google-green-500);
+		}
+
+		.icon-btn.green:hover {
+			background-color: var(--paper-green-900);
+		}
+
+		.icon-btn.grey {
+			background-color: var(--paper-grey-500);
+		}
+
+		.icon-btn.grey:hover {
+			background-color: var(--paper-grey-900);
+		}
+		
+		paper-button[hidden]{
+			display: none !important;
+		}
+		
+	</style>
+	
+	<template>
+		<iron-ajax handle-as="text" id="getUrl" url="{{getUploadUrl}}" params="{{computeParams(url)}}" on-response="urlReceived"></iron-ajax>
+		<paper-button class="iconButton" on-click="onClick" hidden$="{{noButton}}">
+			<iron-icon icon="cloud-upload" style=""></iron-icon>
+		</paper-button>
+
+		<paper-dialog modal="true" id="confirmSaving">
+			<div class="header"><iron-icon icon="icons:warning"></iron-icon>Please crop the image to the right format</div>
+			<div class="image-container content">
+				<img id="image"/>
+			</div>
+			<div class="icons-container content">
+				<paper-icon-button icon="icons:zoom-in" on-tap="zoomIn"></paper-icon-button>
+				<paper-icon-button icon="icons:zoom-out" on-tap="zoomOut"></paper-icon-button>
+				<paper-icon-button icon="icons:fullscreen" on-tap="fit"></paper-icon-button>
+				<paper-icon-button icon="icons:fullscreen-exit" on-tap="contain"></paper-icon-button>
+				<paper-icon-button icon="image:rotate-left" on-tap="rotateLeft"></paper-icon-button>
+				<paper-icon-button icon="image:rotate-right" on-tap="rotateRight"></paper-icon-button>
+				<paper-icon-button icon="image:flip" on-tap="flipHorizontal"></paper-icon-button>
+				<paper-icon-button icon="image:flip" on-tap="flipVertical" style="transform:rotate(90deg)"></paper-icon-button>
+				<paper-icon-button icon="image:crop" on-tap="cropWhitespace"></paper-icon-button>
+			</div>
+			
+			<div class="modal-buttons">
+				<paper-button class="grey icon-btn" on-tap="_cancelChanges">
+					<iron-icon class="icon-btn-icon" icon="cancel"></iron-icon>
+					<span class="icon-btn-text">Cancel</span>
+				</paper-button>
+				<paper-button class="green icon-btn" on-tap="_saveChanges">
+					<iron-icon class="icon-btn-icon" icon="check" hidden$="[[loading]]"></iron-icon>
+					<paper-spinner-lite class="icon-btn-spinner" active="[[loading]]" hidden$="[[!loading]]"></paper-spinner-lite>
+					<span class="icon-btn-text">Save</span>
+				</paper-button>
+			</div>
+		</paper-dialog>
+		
+		<input type="file" id="fileInput" on-change="fileChange" hidden accept="image/*" >
+	</template>
+	<script>
+		Polymer({
+			is: 'cbn-image-upload',
+			behaviors: [Cbn.cropper],
+			properties: {
+				getUploadUrl: {
+					type:String,
+					value: null
+				},
+				params: {
+					type:Object,
+					value: null
+				},
+				/**
+				 * The target url to upload the file
+				 *
+				 * @attribute url
+				 * @type string
+				 * @default "/"
+				 */
+				url: {
+					type: String,
+					value: '/'
+				},
+				noButton: {
+					type:Boolean,
+					value:false
+				},
+				loading: {
+					type: Boolean,
+					value: false
+				},
+				_fileName: {
+					type: String,
+					value: ''
+				}
+			},
+			onClick: function () {
+				var elem = this.$.fileInput;
+				if (elem && document.createEvent) {
+					// sanity check
+					var evt = document.createEvent('MouseEvents');
+					evt.initEvent('click', true, false);
+					elem.dispatchEvent(evt);
+				}
+			},
+			fileChange: function (e) {
+				var files = this.$.fileInput.files;
+				if (files && files.length) {
+					var file = files[0];
+					this._fileName = file.name;
+					this._reset(file);
+				}
+				
+			},
+			startUpload: function () {
+				if (this.getUploadUrl != null) {
+					this.$.getUrl.generateRequest();
+				} else {
+					this._url = this.url;
+					this.upload();
+				}
+			},
+			urlReceived: function (event) {
+				this._url = event.detail.response;
+				this.upload();
+			},
+			upload: function () {
+				var file = this.file;
+				if (file) {
+					var formData = new FormData();
+					formData.append('file', file, this._fileName);
+					var extraParams = this.getParams();
+					for (var i in extraParams) {
+						formData.append(i, extraParams[i]);
+					}
+					this.loading=true;
+					var xhr = new XMLHttpRequest();
+					xhr.upload.addEventListener('progress', function (e) {
+						var done = e.loaded, total = e.total;
+						this.progress = Math.floor(done / total * 1000) / 10;
+					}.bind(this));
+					xhr.open('POST', this._url, true);
+					xhr.onload = function (e) {
+						if (xhr.status == 200) {
+							this.fire("cbn-message", {
+								type: "success",
+								text: "Fisierul a fost uploadat"
+							});
+							this.fire('success', {xhr: xhr});
+							this.$.confirmSaving.close();
+						} else {
+							this.fire("cbn-message", {
+								type: "error",
+								text: "Fisierul nu a fost uploadat ! Incercati din nou."
+							});
+							this.fire('error', {xhr: xhr});
+						}
+						this.loading=false;
+					}.bind(this);
+					xhr.send(formData);
+				}
+			},
+			getParams: function () {
+				var params = this.params || {};
+				if (params && typeof params == 'string') {
+					params = JSON.parse(params);
+				}
+				return params;
+			},
+			computeParams: function (url) {
+				return {'redirectUrl': url};
+			},
+			_cancelChanges:function(){
+				this.$.confirmSaving.close();
+			},
+			_saveChanges: function () {
+				this.generateFile(function () {
+					this.startUpload();
+				}.bind(this));
+			}
+		});
+	</script>
+</dom-module>
+  
