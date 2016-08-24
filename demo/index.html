@@ -16,6 +16,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	<link rel="import" href="../cbn-file-upload.html">
 	<link rel="import" href="../cbn-image-upload.html">
 
+	<link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+	<link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+
 	<style>
 		html,body{
 			margin:0;
@@ -31,11 +34,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	</style>
 </head>
 <body>
-	<template id="first" is="dom-bind">
-		<cbn-file-upload url="/" get-upload-url="response.txt"></cbn-file-upload>
-		<cbn-file-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-file-upload>
-		<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-image-upload>
-		<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}' image-width="312" image-height="96"></cbn-image-upload>
-	</template>
-	</body>
+	<form id="demoForm" is="cbn-form" model>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template id="first" is="dom-bind">
+				<cbn-file-upload url="/" get-upload-url="response.txt"></cbn-file-upload>
+				<cbn-file-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-file-upload>
+				<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}'></cbn-image-upload>
+				<cbn-image-upload url="/" get-upload-url="response.txt" params='{"test":"test"}' image-width="312" image-height="96"></cbn-image-upload>
+			</template>
+		</demo-snippet>
+	</form>	
+</body>
 </html>
