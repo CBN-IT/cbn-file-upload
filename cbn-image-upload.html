@@ -6,6 +6,7 @@
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../cbn-grid/cbn-app-styles.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../paper-spinner/paper-spinner-lite.html">
 <script>
@@ -88,74 +89,6 @@
 			justify-content: space-around;
 			font-weight: bold;
 		}
-
-		.save,
-		.icon-btn {
-			background-color: #4285f4;
-			color: #fff;
-			min-width: 0;
-			padding: 0 5px 0 5px;
-			margin: 0;
-			height: 26px;
-			overflow: hidden;
-		}
-
-		.icon-btn > .icon-btn-text {
-			margin-right: 5px;
-		}
-
-		.save > iron-icon,
-		.save > .save-icon,
-		.icon-btn > .icon-btn-icon {
-			width: 20px;
-			height: 20px;
-			margin: 3px 0;
-		}
-
-		.save > paper-spinner,
-		.save > .save-spinner,
-		.icon-btn > .icon-btn-spinner {
-			--paper-spinner-layer-1-color: white;
-			--paper-spinner-layer-2-color: white;
-			--paper-spinner-layer-3-color: white;
-			--paper-spinner-layer-4-color: white;
-			--paper-spinner-color: white;
-			height: 16px;
-			width: 16px;
-			margin: 5px 2px;
-		}
-
-		.icon-btn.blue {
-			background-color: var(--paper-blue-500);
-		}
-
-		.icon-btn.blue:hover {
-			background-color: var(--paper-blue-900);
-		}
-
-		.icon-btn.red {
-			background-color: var(--google-red-500);
-		}
-
-		.icon-btn.red:hover {
-			background-color: var(--paper-red-900);
-		}
-
-		.icon-btn.green {
-			background-color: var(--google-green-500);
-		}
-
-		.icon-btn.green:hover {
-			background-color: var(--paper-green-900);
-		}
-
-		.icon-btn.grey {
-			background-color: var(--paper-grey-500);
-		}
-
-		.icon-btn.grey:hover {
-			background-color: var(--paper-grey-900);
-		}
 		
 		paper-button[hidden]{
 			display: none !important;
@@ -187,11 +120,11 @@
 			</div>
 			
 			<div class="modal-buttons">
-				<paper-button class="grey icon-btn" on-tap="_cancelChanges">
+				<paper-button class="background grey icon-btn" on-tap="_cancelChanges">
 					<iron-icon class="icon-btn-icon" icon="cancel"></iron-icon>
 					<span class="icon-btn-text">Cancel</span>
 				</paper-button>
-				<paper-button class="green icon-btn" on-tap="_saveChanges">
+				<paper-button class="background green icon-btn" on-tap="_saveChanges">
 					<iron-icon class="icon-btn-icon" icon="check" hidden$="[[loading]]"></iron-icon>
 					<paper-spinner-lite class="icon-btn-spinner" active="[[loading]]" hidden$="[[!loading]]"></paper-spinner-lite>
 					<span class="icon-btn-text">Save</span>
