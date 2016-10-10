@@ -18,7 +18,8 @@
     "paper-styles": "PolymerElements/paper-styles#1.1.4",
     "paper-icon-button": "PolymerElements/paper-icon-button#1.1.2",
     "paper-spinner": "PolymerElements/paper-spinner#1.2.0",
-    "cropperjs": "fengyuanchen/cropperjs#0.5.5"
+    "cropperjs": "fengyuanchen/cropperjs#0.5.5",
+    "cbn-grid": "CBN-IT/cbn-grid#master"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester",
